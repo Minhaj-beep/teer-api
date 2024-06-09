@@ -186,7 +186,7 @@ router.get('/count/total', async (req, res) => {
     }
 });
 
-// Helper function to convert a date to IST
+// Helper function to convert UTC date to IST
 const toIST = (date) => {
     const offset = 5.5 * 60 * 60 * 1000; // IST offset is +5:30 from UTC
     return new Date(date.getTime() + offset);
@@ -203,18 +203,21 @@ router.patch('/:id/ticket', async (req, res) => {
         // Combine game date and time into a single Date object in IST
         const gameDate = new Date(game.date);
         const [hours, minutes] = game.time.split(':').map(Number);
-        gameDate.setHours(hours);
-        gameDate.setMinutes(minutes);
+        gameDate.setUTCHours(hours - 5, minutes - 30, 0, 0); // Set hours and minutes in UTC
 
+        // Convert game date to IST
         const gameTimeIST = toIST(gameDate);
-        const currentTimeIST = toIST(new Date());
+        
+        // Convert current server time to IST
+        const currentTime = new Date();
+        const currentTimeIST = toIST(currentTime);
 
         const fiveMinutesBeforeGameIST = new Date(gameTimeIST.getTime() - 5 * 60000);
 
         // Log times for debugging
-        console.log("Game Time (IST):", gameTimeIST);
-        console.log("Current Time (IST):", currentTimeIST);
-        console.log("Five Minutes Before Game (IST):", fiveMinutesBeforeGameIST);
+        console.log("Game Time (IST):", gameTimeIST.toISOString());
+        console.log("Current Time (IST):", currentTimeIST.toISOString());
+        console.log("Five Minutes Before Game (IST):", fiveMinutesBeforeGameIST.toISOString());
 
         if (currentTimeIST >= fiveMinutesBeforeGameIST) {
             return res.status(403).send('Updates are not allowed within 5 minutes of the game time');
