@@ -12,6 +12,22 @@ router.get('/', async (req, res) => {
     }
 });
 
+// Route to check user status by username using query parameters
+router.get('/status', async (req, res) => {
+    const { name } = req.query;
+
+    try {
+        const user = await Users.findOne({ name });
+        if (user) {
+            res.json({ name: user.name, status: user.status });
+        } else {
+            res.status(404).json({ message: "User not found." });
+        }
+    } catch (e) {
+        res.status(500).json({ message: e.message });
+    }
+});
+
 // Get one user by ID
 router.get('/:id', getUser, (req, res) => {
     res.json(res.user);
