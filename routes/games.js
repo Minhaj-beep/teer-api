@@ -35,6 +35,11 @@ router.get('/', async (req, res) => {
     }
 });
 
+// Get code
+router.get('/code', async (req, res) => {
+    res.status(200).json({ code: 1 });
+});
+
 // Get one game
 router.get('/:id', getGame, (req, res) => {
     res.json({
