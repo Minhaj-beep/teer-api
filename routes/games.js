@@ -186,6 +186,12 @@ router.get('/count/total', async (req, res) => {
     }
 });
 
+// Helper function to convert a date to IST
+const toIST = (date) => {
+    const offset = 5.5 * 60 * 60 * 1000; // IST offset is +5:30 from UTC
+    return new Date(date.getTime() + offset);
+};
+
 // Update ticket amounts
 router.patch('/:id/ticket', async (req, res) => {
     try {
@@ -194,14 +200,23 @@ router.patch('/:id/ticket', async (req, res) => {
             return res.status(404).json({ message: "Game not found" });
         }
 
-        const gameTime = new Date(game.date);
+        // Combine game date and time into a single Date object in IST
+        const gameDate = new Date(game.date);
         const [hours, minutes] = game.time.split(':').map(Number);
-        gameTime.setHours(hours, minutes, 0, 0);
+        gameDate.setHours(hours);
+        gameDate.setMinutes(minutes);
 
-        const currentTime = new Date();
-        const fiveMinutesBeforeGame = new Date(gameTime.getTime() - 5 * 60000);
+        const gameTimeIST = toIST(gameDate);
+        const currentTimeIST = toIST(new Date());
 
-        if (currentTime >= fiveMinutesBeforeGame) {
+        const fiveMinutesBeforeGameIST = new Date(gameTimeIST.getTime() - 5 * 60000);
+
+        // Log times for debugging
+        console.log("Game Time (IST):", gameTimeIST);
+        console.log("Current Time (IST):", currentTimeIST);
+        console.log("Five Minutes Before Game (IST):", fiveMinutesBeforeGameIST);
+
+        if (currentTimeIST >= fiveMinutesBeforeGameIST) {
             return res.status(403).send('Updates are not allowed within 5 minutes of the game time');
         }
 
