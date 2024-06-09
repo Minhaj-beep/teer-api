@@ -220,7 +220,7 @@ router.patch('/:id/ticket', async (req, res) => {
         console.log("Five Minutes Before Game (IST):", fiveMinutesBeforeGameIST.toISOString());
 
         if (currentTimeIST >= fiveMinutesBeforeGameIST) {
-            return res.status(403).send('Updates are not allowed within 5 minutes of the game time');
+            return res.status(403).send({message: 'Updates are not allowed within 5 minutes of the game time'});
         }
 
         const updates = req.body.numbers;  // Expect an array of { number, amount }
