@@ -239,11 +239,12 @@ router.patch('/:id/ticket', async (req, res) => {
 
         const updatedGame = await game.save();
         res.json({
-            ...updatedGame.toObject(),
-            totalAmount: updatedGame.totalAmount,
-            lowestAmountNumber: updatedGame.lowestAmountNumber,
-            highestAmountNumber: updatedGame.highestAmountNumber,
-            totalGiveAway: updatedGame.totalGiveAway
+            message: "Updated Successfully!"
+            // ...updatedGame.toObject(),
+            // totalAmount: updatedGame.totalAmount,
+            // lowestAmountNumber: updatedGame.lowestAmountNumber,
+            // highestAmountNumber: updatedGame.highestAmountNumber,
+            // totalGiveAway: updatedGame.totalGiveAway
         });
     } catch (e) {
         res.status(500).json({ message: e.message });
