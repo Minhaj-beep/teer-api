@@ -161,7 +161,8 @@ router.get('/status/today', async (req, res) => {
             number: game.lowestAmountNumber,
             date: game.date,
             time: game.time,
-            name: game.name
+            name: game.name,
+            id: game._id
         }));
         res.json(data);
         // res.json(todayGames.map(game => ({
